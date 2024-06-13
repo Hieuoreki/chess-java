@@ -13,24 +13,24 @@ public class ChessModel {
 		{
 			pieceBox.add(new ChessPiece(0 + i * 7, 7, Player.BLACK, Rank.ROOK, "Rook-black"));
 			pieceBox.add(new ChessPiece(0 + i * 7, 0, Player.WHITE, Rank.ROOK, "Rook-white"));
-//
-//			pieceBox.add(new ChessPiece(1 + i * 5, 7, Player.BLACK, Rank.KNIGHT, "Knight-black"));
-//			pieceBox.add(new ChessPiece(1 + i * 5, 0, Player.WHITE, Rank.KNIGHT, "Knight-white"));
-//
-//			pieceBox.add(new ChessPiece(2 + i * 3, 7, Player.BLACK, Rank.BISHOP, "Bishop-black"));
-//			pieceBox.add(new ChessPiece(2 + i * 3, 0, Player.WHITE, Rank.BISHOP, "Bishop-white"));
+
+			pieceBox.add(new ChessPiece(1 + i * 5, 7, Player.BLACK, Rank.KNIGHT, "Knight-black"));
+			pieceBox.add(new ChessPiece(1 + i * 5, 0, Player.WHITE, Rank.KNIGHT, "Knight-white"));
+
+			pieceBox.add(new ChessPiece(2 + i * 3, 7, Player.BLACK, Rank.BISHOP, "Bishop-black"));
+			pieceBox.add(new ChessPiece(2 + i * 3, 0, Player.WHITE, Rank.BISHOP, "Bishop-white"));
 		}
 		
-//		for (int i = 0; i < 8; i++) 
-//		{
-//			pieceBox.add(new ChessPiece(i, 6, Player.BLACK, Rank.PAWN, "Pawn-black"));
-//			pieceBox.add(new ChessPiece(i, 1, Player.WHITE, Rank.PAWN, "Pawn-white"));
-//		}
-//		
-//		pieceBox.add(new ChessPiece(3, 7, Player.BLACK, Rank.QUEEN, "Queen-black"));
-//		pieceBox.add(new ChessPiece(3, 0, Player.WHITE, Rank.QUEEN, "Queen-white"));
-//		pieceBox.add(new ChessPiece(4, 7, Player.BLACK, Rank.KING, "King-black"));
-//		pieceBox.add(new ChessPiece(4, 0, Player.WHITE, Rank.KING, "King-white"));
+		for (int i = 0; i < 8; i++) 
+		{
+			pieceBox.add(new ChessPiece(i, 6, Player.BLACK, Rank.PAWN, "Pawn-black"));
+			pieceBox.add(new ChessPiece(i, 1, Player.WHITE, Rank.PAWN, "Pawn-white"));
+		}
+		
+		pieceBox.add(new ChessPiece(3, 7, Player.BLACK, Rank.QUEEN, "Queen-black"));
+		pieceBox.add(new ChessPiece(3, 0, Player.WHITE, Rank.QUEEN, "Queen-white"));
+		pieceBox.add(new ChessPiece(4, 7, Player.BLACK, Rank.KING, "King-black"));
+		pieceBox.add(new ChessPiece(4, 0, Player.WHITE, Rank.KING, "King-white"));
 	}
 	
 	ChessPiece pieceAt(int col, int row)
@@ -48,7 +48,7 @@ public class ChessModel {
 	@Override
 	public String toString() {
 		String desc = "";
-		for (int row = 7; row > 0; row--) 
+		for (int row = 7; row >= 0; row--) 
 		{
 			desc += "" + row;
 			for (int col = 0; col < 8; col++) 

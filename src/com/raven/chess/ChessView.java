@@ -22,6 +22,8 @@ public class ChessView extends JPanel {
 	int originY = 45;
 	int cellSize = 60;
 	
+	ChessDelegate chessDelegate;
+	
 	// Lưu trữ ảnh
 	Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
 	
@@ -63,7 +65,23 @@ public class ChessView extends JPanel {
 		
 		drawBoard(g2);
 		
-		drawImage(g2, 0, 0, "Pawn-black");
+		drawPieces(g2);
+		
+	}
+	
+	public void drawPieces(Graphics2D g2)
+	{
+		for (int row = 7; row >= 0; row--) 
+		{
+			for (int col = 0; col < 8; col++) 
+			{
+				ChessPiece p = chessDelegate.pieceAt(col, row);
+				if(p != null)
+				{
+					drawImage(g2, col, row, p.imgName);
+				}
+			}
+		}
 	}
 	
 	// Phương thức hiện 1 quân cờ trong 1 ô
@@ -77,7 +95,7 @@ public class ChessView extends JPanel {
 	private Image loadImage(String fileName) throws Exception{
 		
 			ClassLoader classLoader = getClass().getClassLoader();
-			URL resUrl = classLoader.getResource("img/Bishop-black.png");
+			URL resUrl = classLoader.getResource("img/" + fileName);
 			if(resUrl == null)
 			{
 				System.out.println("none");
