@@ -18,30 +18,32 @@ public class ChessView extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	int originX = 55;
-	int originY = 45;
-	int cellSize = 60;
+	double scareFactor = 0.9;
+	int originX = -1;
+	int originY = -1;
+	int cellSize = -1;
 	
-	ChessDelegate chessDelegate;
+	private ChessDelegate chessDelegate;
 	
 	// Lưu trữ ảnh
 	Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
 	
-	public ChessView()
+	ChessView(ChessDelegate chessDelegate)
 	{
+		this.chessDelegate = chessDelegate;
 		String[] images = {
-				"Bishop-black",
-				"Bishop-white",
-				"King-black",
-				"King-white",
-				"Knight-black",
-				"Knight-white",
-				"Pawn-black",
-				"Pawn-white",
-				"Queen-black",
-				"Queen-white",
-				"Rook-black",
-				"Rook-white",
+				ChessContants.bBishop,
+				ChessContants.wBishop,
+				ChessContants.bKing,
+				ChessContants.wKing,
+				ChessContants.bKnight,
+				ChessContants.wKnight,
+				ChessContants.bPawn,
+				ChessContants.wPawn,
+				ChessContants.bQueen,
+				ChessContants.wQueen,
+				ChessContants.bRook,
+				ChessContants.wRook,
 		};
 		
 		try {
@@ -60,6 +62,11 @@ public class ChessView extends JPanel {
 	protected void paintChildren(Graphics g) {
 		// TODO Auto-generated method stub
 		super.paintChildren(g);
+		
+		int smaller = Math.min(getSize().width, getSize().height);
+		cellSize= (int)(((double)smaller)* scareFactor/8);
+		originX = (getSize().width - 8 * cellSize)/2;
+		originY = (getSize().height - 8 * cellSize)/2;
 		
 		Graphics2D g2 = (Graphics2D)g;
 		

@@ -11,26 +11,26 @@ public class ChessModel {
 	{
 		for (int i = 0; i < 2; i++) 
 		{
-			pieceBox.add(new ChessPiece(0 + i * 7, 7, Player.BLACK, Rank.ROOK, "Rook-black"));
-			pieceBox.add(new ChessPiece(0 + i * 7, 0, Player.WHITE, Rank.ROOK, "Rook-white"));
+			pieceBox.add(new ChessPiece(0 + i * 7, 7, Player.BLACK, Rank.ROOK, ChessContants.bRook));
+			pieceBox.add(new ChessPiece(0 + i * 7, 0, Player.WHITE, Rank.ROOK, ChessContants.wRook));
 
-			pieceBox.add(new ChessPiece(1 + i * 5, 7, Player.BLACK, Rank.KNIGHT, "Knight-black"));
-			pieceBox.add(new ChessPiece(1 + i * 5, 0, Player.WHITE, Rank.KNIGHT, "Knight-white"));
+			pieceBox.add(new ChessPiece(1 + i * 5, 7, Player.BLACK, Rank.KNIGHT, ChessContants.bKnight));
+			pieceBox.add(new ChessPiece(1 + i * 5, 0, Player.WHITE, Rank.KNIGHT, ChessContants.wKnight));
 
-			pieceBox.add(new ChessPiece(2 + i * 3, 7, Player.BLACK, Rank.BISHOP, "Bishop-black"));
-			pieceBox.add(new ChessPiece(2 + i * 3, 0, Player.WHITE, Rank.BISHOP, "Bishop-white"));
+			pieceBox.add(new ChessPiece(2 + i * 3, 7, Player.BLACK, Rank.BISHOP, ChessContants.bBishop));
+			pieceBox.add(new ChessPiece(2 + i * 3, 0, Player.WHITE, Rank.BISHOP, ChessContants.wBishop));
 		}
 		
 		for (int i = 0; i < 8; i++) 
 		{
-			pieceBox.add(new ChessPiece(i, 6, Player.BLACK, Rank.PAWN, "Pawn-black"));
-			pieceBox.add(new ChessPiece(i, 1, Player.WHITE, Rank.PAWN, "Pawn-white"));
+			pieceBox.add(new ChessPiece(i, 6, Player.BLACK, Rank.PAWN, ChessContants.bPawn));
+			pieceBox.add(new ChessPiece(i, 1, Player.WHITE, Rank.PAWN, ChessContants.wPawn));
 		}
 		
-		pieceBox.add(new ChessPiece(3, 7, Player.BLACK, Rank.QUEEN, "Queen-black"));
-		pieceBox.add(new ChessPiece(3, 0, Player.WHITE, Rank.QUEEN, "Queen-white"));
-		pieceBox.add(new ChessPiece(4, 7, Player.BLACK, Rank.KING, "King-black"));
-		pieceBox.add(new ChessPiece(4, 0, Player.WHITE, Rank.KING, "King-white"));
+		pieceBox.add(new ChessPiece(3, 7, Player.BLACK, Rank.QUEEN, ChessContants.bQueen));
+		pieceBox.add(new ChessPiece(3, 0, Player.WHITE, Rank.QUEEN, ChessContants.wQueen));
+		pieceBox.add(new ChessPiece(4, 7, Player.BLACK, Rank.KING, ChessContants.bKing));
+		pieceBox.add(new ChessPiece(4, 0, Player.WHITE, Rank.KING, ChessContants.wKing));
 	}
 	
 	ChessPiece pieceAt(int col, int row)
