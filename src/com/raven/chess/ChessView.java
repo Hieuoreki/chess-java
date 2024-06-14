@@ -5,6 +5,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -14,19 +18,24 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class ChessView extends JPanel {
+public class ChessView extends JPanel implements MouseListener, MouseMotionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	double scareFactor = 0.9;
-	int originX = -1;
-	int originY = -1;
-	int cellSize = -1;
+	private double scareFactor = 0.9;
+	private int originX = -1;
+	private int originY = -1;
+	private int cellSize = -1;
 	
 	private ChessDelegate chessDelegate;
 	
 	// Lưu trữ ảnh
 	Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
+	private int fromCol = -1;
+	private int fromRow = -1;
+	
+	private ChessPiece movingPiece;
+	private Point movingPointPiece;
 	
 	ChessView(ChessDelegate chessDelegate)
 	{
@@ -56,6 +65,9 @@ public class ChessView extends JPanel {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+		
+		addMouseListener(this);
+		addMouseMotionListener(this);
 	}
 	
 	@Override
@@ -88,6 +100,12 @@ public class ChessView extends JPanel {
 					drawImage(g2, col, row, p.imgName);
 				}
 			}
+		}
+		
+		if(movingPiece != null && movingPointPiece != null)
+		{
+			Image img = keyNameValueImage.get(movingPiece.imgName);
+			g2.drawImage(img, movingPointPiece.x - cellSize/2, movingPointPiece.y - cellSize/2, cellSize, cellSize, null);
 		}
 	}
 	
@@ -136,6 +154,56 @@ public class ChessView extends JPanel {
 	{
 		g2.setColor(light ? Color.white : Color.gray);
 		g2.fillRect(originX + col * cellSize, originY + row * cellSize, cellSize, cellSize);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		fromCol = (e.getPoint().x - originX) / cellSize;
+		fromRow = (e.getPoint().y - originY) / cellSize;
+		movingPiece = chessDelegate.pieceAt(fromCol, fromRow);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		int col = (e.getPoint().x - originX) / cellSize;
+		int row = (e.getPoint().y - originY) / cellSize;
+		System.out.println("from" + fromCol + " to " + col);
+		chessDelegate.movePiece(fromCol, fromRow, col, row);
+		movingPiece = null;
+		movingPointPiece = null;
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		movingPointPiece = e.getPoint();
+		repaint();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -33,6 +33,17 @@ public class ChessModel {
 		pieceBox.add(new ChessPiece(4, 0, Player.WHITE, Rank.KING, ChessContants.wKing));
 	}
 	
+	void movePiece(int fromCol, int fromRow, int toCol, int toRow)
+	{
+		ChessPiece candidate = pieceAt(fromCol, fromRow);
+		if(candidate == null)
+		{
+			return;
+		}
+		candidate.col = toCol;
+		candidate.row = toRow;
+	}
+	
 	ChessPiece pieceAt(int col, int row)
 	{
 		for(ChessPiece chessPiece : pieceBox)
