@@ -6,9 +6,11 @@ import java.util.Set;
 public class ChessModel {
 	
 	private Set<ChessPiece> pieceBox = new HashSet<ChessPiece>();
+	private Player playerInTurn = Player.WHITE; // Khai báo quân trắng đánh trước
 	
 	public void reset()
 	{
+		pieceBox.removeAll(pieceBox);
 		for (int i = 0; i < 2; i++) 
 		{
 			pieceBox.add(new ChessPiece(0 + i * 7, 7, Player.BLACK, Rank.ROOK, ChessContants.bRook));
@@ -31,17 +33,36 @@ public class ChessModel {
 		pieceBox.add(new ChessPiece(3, 0, Player.WHITE, Rank.QUEEN, ChessContants.wQueen));
 		pieceBox.add(new ChessPiece(4, 7, Player.BLACK, Rank.KING, ChessContants.bKing));
 		pieceBox.add(new ChessPiece(4, 0, Player.WHITE, Rank.KING, ChessContants.wKing));
+		
+		playerInTurn = Player.WHITE;
 	}
 	
+	// Phương thức di chuyển quân cờ
 	void movePiece(int fromCol, int fromRow, int toCol, int toRow)
 	{
 		ChessPiece candidate = pieceAt(fromCol, fromRow);
-		if(candidate == null)
+		if(candidate == null || candidate.player != playerInTurn)
 		{
 			return;
 		}
+		
+		// Đoạn ni để 2 quân cờ không trùng nhau đc
+		ChessPiece target = pieceAt(toCol, toRow);
+		if(target != null)
+		{
+			if(target.player == candidate.player)
+			{
+				return;
+			}
+			else
+			{
+				pieceBox.remove(target);
+			}
+		}
+		
 		candidate.col = toCol;
 		candidate.row = toRow;
+		playerInTurn = playerInTurn == Player.WHITE ? Player.BLACK : Player.WHITE; // Quân trắng đánh trước
 	}
 	
 	ChessPiece pieceAt(int col, int row)
