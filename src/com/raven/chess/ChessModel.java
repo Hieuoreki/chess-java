@@ -41,7 +41,8 @@ public class ChessModel {
 	void movePiece(int fromCol, int fromRow, int toCol, int toRow)
 	{
 		ChessPiece candidate = pieceAt(fromCol, fromRow);
-		if(candidate == null || candidate.player != playerInTurn)
+		System.out.println(fromCol + " ," + fromRow + " ," + toCol + " ," + toRow);
+		if(candidate == null || candidate.player != playerInTurn|| fromCol == toCol && fromRow == toRow) // 
 		{
 			return;
 		}

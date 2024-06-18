@@ -15,8 +15,11 @@ import java.util.concurrent.Executors;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class ChessController implements ChessDelegate, ActionListener, Runnable {
+	
+	private JFrame frame;
 	
 	private ChessModel chessModel = new ChessModel();
 	private ChessView chessBoardPanel;
@@ -24,11 +27,14 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 	private JButton btnServer;
 	private JButton btnClient;
 	
+	private PrintWriter printWriter;
+	private Scanner scanner;
+	
 	public ChessController() {
 		// TODO Auto-generated constructor stub
 		chessModel.reset();
 		
-		JFrame frame = new JFrame("Chess");
+		frame = new JFrame("Chess");
 		frame.setSize(600, 600);
 //		frame.setLocation(0, 1300);
 		frame.setLayout(new BorderLayout());
@@ -72,6 +78,34 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 		// TODO Auto-generated method stub
 		chessModel.movePiece(fromCol, fromRow, toCol, toRow);
 		chessBoardPanel.repaint();
+		if(printWriter != null)
+		{
+			printWriter.println(fromCol + "," + fromRow + "," + toCol + "," + toRow);
+		}
+	}
+	
+	private void receiveMove()
+	{
+		while(scanner.hasNextLine())
+		{
+			String moveStr = scanner.nextLine();
+			System.out.println("server " + moveStr);
+			String[] moveStrAll = moveStr.split(",");
+			int fromCol = Integer.parseInt(moveStrAll[0]);
+			int fromRow = Integer.parseInt(moveStrAll[1]);
+			int toCol = Integer.parseInt(moveStrAll[2]);
+			int toRow = Integer.parseInt(moveStrAll[3]);
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					chessModel.movePiece(fromCol, fromRow, toCol, toRow);
+					chessBoardPanel.repaint();
+				}
+			});
+		}
 	}
 
 	@Override
@@ -84,16 +118,30 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 		}
 		else if(e.getSource() == btnServer)
 		{
+			frame.setTitle("Chat Server");
 			ExecutorService  pool = Executors.newFixedThreadPool(1);
 			pool.execute(this);
 		}
 		else if(e.getSource() == btnClient)
 		{
+			frame.setTitle("Chat Client");
 			System.out.println("connect for socket client");
 			try {
-				Socket socket = new Socket("localhost", 5000);
-				Scanner in = new Scanner(socket.getInputStream());
-				System.out.println("server " + in.nextLine());
+				if(scanner == null || printWriter == null)
+				{
+					Socket socket = new Socket("localhost", 5000);
+					scanner = new Scanner(socket.getInputStream());
+					printWriter = new PrintWriter(socket.getOutputStream());
+				}
+				Executors.newFixedThreadPool(1).execute(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						receiveMove();
+					}
+				});
+				
 			} catch (Exception e2) {
 				// TODO: handle exception
 				e2.printStackTrace();
@@ -108,18 +156,14 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 			ServerSocket listener = new ServerSocket(5000);
 			System.out.println("server is listening on port 5000");
 			
-			while(true)
+			if(scanner == null || printWriter == null)
 			{
-				try {
-					Socket socket = listener.accept();
-					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-					out.println("form 0-1");
-					System.out.println("server sending to client");
-				} catch (Exception e2) {
-					// TODO: handle exception
-					e2.printStackTrace();
-				}
+				Socket socket = listener.accept();
+				printWriter = new PrintWriter(socket.getOutputStream(), true);
+				scanner = new Scanner(socket.getInputStream());
 			}
+			receiveMove();
+			
 		} catch (Exception e2) {
 			// TODO: handle exception
 			e2.printStackTrace();

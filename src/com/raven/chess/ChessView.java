@@ -16,11 +16,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class ChessView extends JPanel implements MouseListener, MouseMotionListener {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L; 
 	
 	private double scareFactor = 0.9;
 	private int originX = -1;
@@ -90,7 +91,7 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	
 	public void drawPieces(Graphics2D g2)
 	{
-		for (int row = 7; row >= 0; row--) 
+		for (int row = 0; row < 8; row++) 
 		{
 			for (int col = 0; col < 8; col++) 
 			{
@@ -113,7 +114,7 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	private void drawImage(Graphics2D g2, int col, int row, String image)
 	{
 		Image img = keyNameValueImage.get(image);
-		g2.drawImage(img, originX + col * cellSize, originY + row * cellSize, cellSize, cellSize, null);
+		g2.drawImage(img, originX + col * cellSize, originY + ( 7 - row ) * cellSize, cellSize, cellSize, null);
 	}
 	
 	// Phương thức load 1 ảnh cờ
@@ -166,7 +167,7 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		fromCol = (e.getPoint().x - originX) / cellSize;
-		fromRow = (e.getPoint().y - originY) / cellSize;
+		fromRow = 7 - (e.getPoint().y - originY) / cellSize;
 		movingPiece = chessDelegate.pieceAt(fromCol, fromRow);
 	}
 
@@ -174,9 +175,13 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		int col = (e.getPoint().x - originX) / cellSize;
-		int row = (e.getPoint().y - originY) / cellSize;
-		System.out.println("from" + fromCol + " to " + col);
-		chessDelegate.movePiece(fromCol, fromRow, col, row);
+		int row = 7 - (e.getPoint().y - originY) / cellSize;
+		
+		if(fromCol != col || fromRow != row)
+		{
+			chessDelegate.movePiece(fromCol, fromRow, col, row);
+		}
+				
 		movingPiece = null;
 		movingPointPiece = null;
 	}
