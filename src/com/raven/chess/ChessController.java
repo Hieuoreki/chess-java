@@ -5,6 +5,9 @@ import java.awt.Button;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,7 +20,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class ChessController implements ChessDelegate, ActionListener, Runnable {
+public class ChessController implements ChessDelegate, ActionListener {
+	
+	private int PORT = 50000;
 	
 	private JFrame frame;
 	
@@ -27,8 +32,10 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 	private JButton btnServer;
 	private JButton btnClient;
 	
+	private Socket socket;
+	private ServerSocket listener;
+	
 	private PrintWriter printWriter;
-	private Scanner scanner;
 	
 	public ChessController() {
 		// TODO Auto-generated constructor stub
@@ -61,6 +68,19 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 		
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+				if(printWriter != null) printWriter.close();
+				try {
+					if(listener != null) listener.close();
+					if(socket != null) socket.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public static void main(String[] args) {
@@ -84,7 +104,7 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 		}
 	}
 	
-	private void receiveMove()
+	private void receiveMove(Scanner scanner)
 	{
 		while(scanner.hasNextLine())
 		{
@@ -107,6 +127,53 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 			});
 		}
 	}
+	
+	private void runSocketServer()
+	{
+		Executors.newFixedThreadPool(1).execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					listener = new ServerSocket(PORT);
+					System.out.println("server is listening on port: " + PORT);
+
+					socket = listener.accept();
+					printWriter = new PrintWriter(socket.getOutputStream(), true);
+					Scanner scanner = new Scanner(socket.getInputStream());
+					
+					receiveMove(scanner);
+					
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	private void runSocketClient()
+	{
+		try {
+			socket = new Socket("localhost", PORT);
+			Scanner scanner = new Scanner(socket.getInputStream());
+			printWriter = new PrintWriter(socket.getOutputStream(), true);
+
+			Executors.newFixedThreadPool(1).execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					receiveMove(scanner);
+				}
+			});
+			
+		} catch (Exception e2) {
+			// TODO: handle exception
+			e2.printStackTrace();
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -115,59 +182,39 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable 
 		{
 			chessModel.reset();
 			chessBoardPanel.repaint();
+			
+			try {
+				if(listener != null)
+				{
+					listener.close();
+				}
+				if(socket != null)
+				{
+					socket.close();
+				}
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			btnClient.setEnabled(true);
+			btnServer.setEnabled(true);
 		}
 		else if(e.getSource() == btnServer)
 		{
+			btnServer.setEnabled(false); // Vô hiệu hóa sau 1 lần bấm
+			btnClient.setEnabled(false);
 			frame.setTitle("Chat Server");
-			ExecutorService  pool = Executors.newFixedThreadPool(1);
-			pool.execute(this);
+			runSocketServer();
 		}
 		else if(e.getSource() == btnClient)
-		{
+		{	
+			btnClient.setEnabled(false);
+			btnServer.setEnabled(false);
 			frame.setTitle("Chat Client");
 			System.out.println("connect for socket client");
-			try {
-				if(scanner == null || printWriter == null)
-				{
-					Socket socket = new Socket("localhost", 5000);
-					scanner = new Scanner(socket.getInputStream());
-					printWriter = new PrintWriter(socket.getOutputStream());
-				}
-				Executors.newFixedThreadPool(1).execute(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						receiveMove();
-					}
-				});
-				
-			} catch (Exception e2) {
-				// TODO: handle exception
-				e2.printStackTrace();
-			}
+			runSocketClient();
 		}
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		try {
-			ServerSocket listener = new ServerSocket(5000);
-			System.out.println("server is listening on port 5000");
-			
-			if(scanner == null || printWriter == null)
-			{
-				Socket socket = listener.accept();
-				printWriter = new PrintWriter(socket.getOutputStream(), true);
-				scanner = new Scanner(socket.getInputStream());
-			}
-			receiveMove();
-			
-		} catch (Exception e2) {
-			// TODO: handle exception
-			e2.printStackTrace();
-		}
-	}
+
 
 }

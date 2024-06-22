@@ -31,7 +31,7 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	private ChessDelegate chessDelegate;
 	
 	// Lưu trữ ảnh
-	Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
+	private Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
 	private int fromCol = -1;
 	private int fromRow = -1;
 	
